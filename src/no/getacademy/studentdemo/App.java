@@ -8,9 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.*;
 import javafx.stage.Stage;
-import no.getacademy.studentdemo.beans.AbstractItem;
-import no.getacademy.studentdemo.beans.Student;
-import no.getacademy.studentdemo.beans.User;
+import no.getacademy.studentdemo.beans.*;
 import no.getacademy.studentdemo.io.MySQLProvider;
 import no.getacademy.studentdemo.view.*;
 
@@ -95,7 +93,7 @@ public class App extends Application
         catch (Exception e)
         {
             System.err.println(iniFile + " could not be opened. " + e);
-            System.err.println("Using default values" + e);
+            System.exit(-2);
         }
     }
 }
