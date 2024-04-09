@@ -98,7 +98,7 @@ public class App extends Application
         catch (Exception e)
         {
             System.err.println(iniFile + " could not be opened. " + e);
-            System.err.println("Using default values" + e);
+            System.exit(-2);
         }
     }
 

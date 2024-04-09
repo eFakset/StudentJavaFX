@@ -29,6 +29,7 @@ public class MySQLProvider
         catch (Exception e)
         {
             System.err.println("MySQLProvider - Kobling til database feilet: " + e);
+            System.exit(-2);
         }
         return c;
     }
