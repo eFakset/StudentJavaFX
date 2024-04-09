@@ -19,8 +19,7 @@ public class TeacherScene extends Scene
     private ComboBox<Teacher> teacherCb;
     private ComboBox<Level> levelCb;
     private TreeSet<Student> students;
-    ObservableList<Student> displayStudents;
-    TableColumn<Student, Integer> idCol;
+    private ObservableList<Student> displayStudents;
 
     public TeacherScene(Group root)
     {
@@ -55,12 +54,18 @@ public class TeacherScene extends Scene
 
         TableView<Student> tableView = new TableView<>(displayStudents);
 
-        this.idCol = new TableColumn<>("Nr");
+        TableColumn<Student, Integer> idCol = new TableColumn<>("Nr");
         idCol.setCellValueFactory(new PropertyValueFactory<>(Student.IDPROPERTY_NAME));
         TableColumn<Student, String> nameCol = new TableColumn<>("Navn");
         nameCol.setCellValueFactory(new PropertyValueFactory<>(Student.NAMEPROPERTY_NAME));
+        TableColumn<Student, String> mailIdCol = new TableColumn<>("Mail");
+        mailIdCol.setCellValueFactory(new PropertyValueFactory<>(Student.MAILIDPROPERTY_NAME));
+        TableColumn<Student, String> discordNameCol = new TableColumn<>("Discord");
+        discordNameCol.setCellValueFactory(new PropertyValueFactory<>(Student.DISCORDNAMEPROPERTY_NAME));
+        TableColumn<Student, String> gitHubNameCol = new TableColumn<>("GitHub");
+        gitHubNameCol.setCellValueFactory(new PropertyValueFactory<>(Student.GITHUBNAMEPROPERTY_NAME));
 
-        tableView.getColumns().setAll(idCol, nameCol);        
+        tableView.getColumns().setAll(idCol, nameCol, mailIdCol, discordNameCol, gitHubNameCol);        
 
         return tableView;
     }
@@ -68,10 +73,8 @@ public class TeacherScene extends Scene
     public void
     activate()
     {
-        TreeSet<Teacher> teachers = App.provider.getTeachers();
-
         this.teacherCb.getItems().add(new Teacher()); // "navn" = ...
-        this.teacherCb.getItems().addAll(teachers);
+        this.teacherCb.getItems().addAll(App.teachers);
 
         this.teacherCb.setOnAction(new EventHandler<>() 
         {

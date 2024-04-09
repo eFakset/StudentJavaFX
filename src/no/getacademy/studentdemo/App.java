@@ -1,16 +1,14 @@
 package no.getacademy.studentdemo;
 
 import java.io.FileReader;
-import java.util.Properties;
+import java.util.*;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.*;
 import javafx.stage.Stage;
-import no.getacademy.studentdemo.beans.AbstractItem;
-import no.getacademy.studentdemo.beans.Student;
-import no.getacademy.studentdemo.beans.User;
+import no.getacademy.studentdemo.beans.*;
 import no.getacademy.studentdemo.io.MySQLProvider;
 import no.getacademy.studentdemo.view.*;
 
@@ -19,6 +17,9 @@ public class App extends Application
     private LoginScene                  loginScene; 
     private TeacherScene                teacherScene; 
     private StudentScene                studentScene; 
+
+    public static TreeSet<Teacher>      teachers;
+    public static TreeSet<Level>        levels;
 
     public static MySQLProvider         provider;
     public Properties                   defaultProperties, properties;
@@ -41,6 +42,8 @@ public class App extends Application
                                             this.properties.getProperty(App.PROP_DBUSER),
                                             this.properties.getProperty(App.PROP_DBPASSWORD)
         );
+
+        this.loadSets();
 
         Group loginRoot = new Group();
         this.loginScene = new LoginScene(loginRoot);
@@ -97,5 +100,13 @@ public class App extends Application
             System.err.println(iniFile + " could not be opened. " + e);
             System.err.println("Using default values" + e);
         }
+    }
+
+    private void
+    loadSets()
+    {
+// todo Flytte def -> final        
+        App.teachers = App.provider.getTeachers();
+
     }
 }

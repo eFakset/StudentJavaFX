@@ -146,7 +146,7 @@ public class MySQLProvider
     public Student
     getStudent(int studentId)
     {
-        String sql = "select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, opprettet_dt, endret_dt";
+        String sql = "select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt";
         sql = sql + " from vstudent where student_id = " + studentId;
 
         return this.selectStudent(sql);
@@ -162,19 +162,7 @@ public class MySQLProvider
             ResultSet result = stmt.executeQuery();
             while (result.next())
             {
-                student = new Student(
-                    result.getInt(1), 
-                    result.getInt(2),
-                    result.getInt(3),
-                    result.getString(4),
-                    result.getString(5),
-                    result.getString(6),
-                    result.getString(7),
-                    result.getString(8),
-                    result.getInt(9),
-                    result.getDate(10),
-                    result.getDate(11)
-                );
+                student = processStudent(result);
             }
         }
         catch (SQLException e)
@@ -189,7 +177,7 @@ public class MySQLProvider
     getStudents(int teacherId, int levelId)
     {
         StringBuilder b = new StringBuilder();
-        b.append("select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, opprettet_dt, endret_dt from vstudent");
+        b.append("select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt from vstudent");
         if (teacherId > 0)
         {
             b.append(" where");
@@ -222,20 +210,7 @@ public class MySQLProvider
             ResultSet result = stmt.executeQuery();
             while (result.next())
             {
-                students.add(new Student(
-                                    result.getInt(1), 
-                                    result.getInt(2),
-                                    result.getInt(3),
-                                    result.getString(4),
-                                    result.getString(5),
-                                    result.getString(6),
-                                    result.getString(7),
-                                    result.getString(8),
-                                    result.getInt(9),
-                                    result.getDate(10),
-                                    result.getDate(11)
-                                )
-                            );
+                students.add(processStudent(result));
             }
         }
         catch (SQLException e)
@@ -244,8 +219,36 @@ public class MySQLProvider
         }
         
         return students;
-    }   
+    } 
     
+    private Student
+    processStudent(ResultSet result)
+    {
+        try
+        {
+            return new Student(
+                result.getInt(1), 
+                result.getInt(2),
+                result.getInt(3),
+                result.getString(4),
+                result.getString(5),
+                result.getString(6),
+                result.getString(7),
+                result.getString(8),
+                result.getInt(9),
+                result.getInt(10),
+                result.getDate(11),
+                result.getDate(12)
+            );
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Feil i processStudent: " + e);
+        }
+    
+        return null;
+    }
+
     public TreeSet<Level>
     getLevels()
     {

@@ -28,7 +28,7 @@ public class Teacher extends AbstractItem implements Comparable<Teacher>
     userIdProperty()
     {
         if (this.userIdProperty == null)
-            this.userIdProperty = new SimpleIntegerProperty(this, "userId");
+            this.userIdProperty = new SimpleIntegerProperty(this, Teacher.USERIDPROPERTY_NAME);
         return this.userIdProperty;
     }
 
@@ -42,7 +42,7 @@ public class Teacher extends AbstractItem implements Comparable<Teacher>
     userTypeIdProperty()
     {
         if (this.userTypeIdProperty == null)
-            this.userTypeIdProperty = new SimpleIntegerProperty(this, "userTypeId");
+            this.userTypeIdProperty = new SimpleIntegerProperty(this, Teacher.USERTYPEIDPROPERTY_NAME);
         return this.userTypeIdProperty;
     }
 
@@ -62,7 +62,7 @@ public class Teacher extends AbstractItem implements Comparable<Teacher>
     userNameProperty()
     {
         if (this.userNameProperty == null)
-            this.userNameProperty = new SimpleStringProperty(this, "userName");
+            this.userNameProperty = new SimpleStringProperty(this, Teacher.USERNAMEPROPERTY_NAME);
         return this.userNameProperty;
     }    
 
@@ -76,7 +76,7 @@ public class Teacher extends AbstractItem implements Comparable<Teacher>
     mailIdProperty()
     {
         if (this.mailIdProperty == null)
-            this.mailIdProperty = new SimpleStringProperty(this, "mailId");
+            this.mailIdProperty = new SimpleStringProperty(this, Teacher.MAILIDPROPERTY_NAME);
         return this.mailIdProperty;
     }    
 

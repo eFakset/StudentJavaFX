@@ -9,11 +9,13 @@ import javafx.beans.property.*;
  */
 public class Student extends AbstractItem implements Comparable<Student>
 {
-    private IntegerProperty userIdProperty, userTypeIdProperty, levelIdProperty;
+    private IntegerProperty userIdProperty, userTypeIdProperty, levelIdProperty, studentLevelIdProperty;
     private StringProperty mailIdProperty, discordNameProperty, gitHubNameProperty, userNameProperty;
     private SimpleObjectProperty<LocalDate> fromProperty, toProperty;
 
-    public Student(int userId, int userTypeId, int id, String name, String mailId, String discordName, String gitHubName, String userName, int levelId, Date fromDate, Date toDate)
+    public Student(int userId, int userTypeId, int id, 
+                    String name, String mailId, String discordName, String gitHubName, String userName, 
+                    int levelId, int studentLevelId, Date fromDate, Date toDate)
     {
         super(id, name);
 
@@ -25,8 +27,8 @@ public class Student extends AbstractItem implements Comparable<Student>
         this.gitHubNameProperty().set(gitHubName);
         this.mailIdProperty().set(mailId);  
         this.levelIdProperty().set(levelId);
+        this.studentLevelIdProperty().set(studentLevelId);
 
-// todo Rydde her når data kommer fra DB        
         if (fromDate != null)
         {
             Calendar fromCal = Calendar.getInstance();
@@ -55,7 +57,7 @@ public class Student extends AbstractItem implements Comparable<Student>
     fromProperty()
     {
         if (this.fromProperty == null)
-            this.fromProperty = new SimpleObjectProperty<>(this, "fromDate");
+            this.fromProperty = new SimpleObjectProperty<>(this, Student.FROM_DATEPROPERTY_NAME);
         return this.fromProperty;
     }
 
@@ -69,7 +71,7 @@ public class Student extends AbstractItem implements Comparable<Student>
     toProperty()
     {
         if (this.toProperty == null)
-            this.toProperty = new SimpleObjectProperty<>(this, "toDate");
+            this.toProperty = new SimpleObjectProperty<>(this, Student.TO_DATEPROPERTY_NAME);
         return this.toProperty;
     }
 
@@ -83,7 +85,7 @@ public class Student extends AbstractItem implements Comparable<Student>
     userIdProperty()
     {
         if (this.userIdProperty == null)
-            this.userIdProperty = new SimpleIntegerProperty(this, "userId");
+            this.userIdProperty = new SimpleIntegerProperty(this, Student.USERIDPROPERTY_NAME);
         return this.userIdProperty;
     }
 
@@ -97,7 +99,7 @@ public class Student extends AbstractItem implements Comparable<Student>
     userTypeIdProperty()
     {
         if (this.userTypeIdProperty == null)
-            this.userTypeIdProperty = new SimpleIntegerProperty(this, "userTypeId");
+            this.userTypeIdProperty = new SimpleIntegerProperty(this, Student.USERTYPEIDPROPERTY_NAME);
         return this.userTypeIdProperty;
     }
 
@@ -107,18 +109,32 @@ public class Student extends AbstractItem implements Comparable<Student>
         return this.userIdProperty.get();
     }
 
-    public IntegerProperty
-    levelIdProperty()
+    public int
+    getStudentLevelId()
     {
-        if (this.levelIdProperty == null)
-            this.levelIdProperty = new SimpleIntegerProperty(this, "levelId");
-        return this.levelIdProperty;
+        return this.studentLevelIdProperty.get();
+    }
+
+    public IntegerProperty
+    studentLevelIdProperty()
+    {
+        if (this.studentLevelIdProperty == null)
+            this.studentLevelIdProperty = new SimpleIntegerProperty(this, Student.STUDENT_LEVELIDPROPERTY_NAME);
+        return this.studentLevelIdProperty;
     }
 
     public int
     getLevelId()
     {
         return this.levelIdProperty.get();
+    }
+
+    public IntegerProperty
+    levelIdProperty()
+    {
+        if (this.levelIdProperty == null)
+            this.levelIdProperty = new SimpleIntegerProperty(this, Student.LEVELIDPROPERTY_NAME);
+        return this.levelIdProperty;
     }
 
     public String 
@@ -131,7 +147,7 @@ public class Student extends AbstractItem implements Comparable<Student>
     userNameProperty()
     {
         if (this.userNameProperty == null)
-            this.userNameProperty = new SimpleStringProperty(this, "userName");
+            this.userNameProperty = new SimpleStringProperty(this, Student.USERNAMEPROPERTY_NAME);
         return this.userNameProperty;
     }    
 
@@ -145,7 +161,7 @@ public class Student extends AbstractItem implements Comparable<Student>
     discordNameProperty()
     {
         if (this.discordNameProperty == null)
-            this.discordNameProperty = new SimpleStringProperty(this, "discordName");
+            this.discordNameProperty = new SimpleStringProperty(this, Student.DISCORDNAMEPROPERTY_NAME);
         return this.discordNameProperty;
     }    
 
@@ -159,7 +175,7 @@ public class Student extends AbstractItem implements Comparable<Student>
     gitHubNameProperty()
     {
         if (this.gitHubNameProperty == null)
-            this.gitHubNameProperty = new SimpleStringProperty(this, "gitHubName");
+            this.gitHubNameProperty = new SimpleStringProperty(this, Student.GITHUBNAMEPROPERTY_NAME);
         return this.gitHubNameProperty;
     }    
 
@@ -173,7 +189,7 @@ public class Student extends AbstractItem implements Comparable<Student>
     mailIdProperty()
     {
         if (this.mailIdProperty == null)
-            this.mailIdProperty = new SimpleStringProperty(this, "mailId");
+            this.mailIdProperty = new SimpleStringProperty(this, Student.MAILIDPROPERTY_NAME);
         return this.mailIdProperty;
     } 
        
