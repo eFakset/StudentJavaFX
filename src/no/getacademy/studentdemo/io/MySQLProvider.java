@@ -3,11 +3,15 @@ package no.getacademy.studentdemo.io;
 import java.sql.*;
 import java.util.*;
 
+import no.getacademy.studentdemo.App;
 import no.getacademy.studentdemo.beans.*;
 
 public class MySQLProvider 
 {
     private final Connection                connection;
+    private TreeSet<Teacher>          teachers;
+    private TreeSet<Level>            levels;
+
 
     public MySQLProvider(String jdbcClass, String jdbcUrl, String user, String password)
     {
@@ -105,40 +109,43 @@ public class MySQLProvider
     public TreeSet<Teacher>
     getTeachers()
     {
-        StringBuilder b = new StringBuilder();
-        b.append("select bruker_id, brukertype_id, ansatt_id, ansatt_nv, mail_id, bruker_nv from VAnsatt");
-
-        TreeSet<Teacher> teachers = new TreeSet<>();
-        
-        try
+        if (this.teachers == null)
         {
-            PreparedStatement stmt = this.connection.prepareStatement(b.toString());
-            ResultSet result = stmt.executeQuery();
-            while (result.next())
+            StringBuilder b = new StringBuilder();
+            b.append("select bruker_id, brukertype_id, ansatt_id, ansatt_nv, mail_id, bruker_nv from VAnsatt");
+
+            this.teachers = new TreeSet<>();
+            
+            try
             {
-                teachers.add(new Teacher(
-                    result.getInt(1), 
-                    result.getInt(2),
-                    result.getInt(3),
-                    result.getString(4),
-                    result.getString(5),
-                    result.getString(6)
-                                )
-                            );
+                PreparedStatement stmt = this.connection.prepareStatement(b.toString());
+                ResultSet result = stmt.executeQuery();
+                while (result.next())
+                {
+                    this.teachers.add(new Teacher(
+                        result.getInt(1), 
+                        result.getInt(2),
+                        result.getInt(3),
+                        result.getString(4),
+                        result.getString(5),
+                        result.getString(6)
+                                    )
+                                );
+                }
+            }
+            catch (SQLException e)
+            {
+                System.err.println("Feil i getStudents: " + b.toString() +  " " + e);
             }
         }
-        catch (SQLException e)
-        {
-            System.err.println("Feil i getStudents: " + b.toString() +  " " + e);
-        }
-        
-        return teachers;
+            
+        return this.teachers;
     }    
 
     public Student
     getStudentByUserId(int userId)
     {
-        String sql = "select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, opprettet_dt, endret_dt";
+        String sql = "select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt";
         sql = sql + " from vstudent where bruker_id = " + userId;
 
         return this.selectStudent(sql);
@@ -227,7 +234,8 @@ public class MySQLProvider
     {
         try
         {
-            return new Student(
+            int studentLevelId = result.getInt(9);
+            Student student = new Student(
                 result.getInt(1), 
                 result.getInt(2),
                 result.getInt(3),
@@ -236,11 +244,23 @@ public class MySQLProvider
                 result.getString(6),
                 result.getString(7),
                 result.getString(8),
-                result.getInt(9),
+                studentLevelId,
                 result.getInt(10),
                 result.getDate(11),
                 result.getDate(12)
             );
+
+            Iterator<Level> iter = this.getLevels().iterator();
+            while (iter.hasNext())
+            {
+                Level level = iter.next();
+                if (level.getId() == studentLevelId)
+                {
+                    student.studentLevelNameProperty().set(level.getName());
+                }
+            }
+
+            return student;
         }
         catch (SQLException e)
         {
@@ -253,9 +273,44 @@ public class MySQLProvider
     public TreeSet<Level>
     getLevels()
     {
-        String sql = "select utdanningssteg_id, utdanningssteg_nv from utdanningssteg";
+        if (this.levels == null)
+        {
+            String sql = "select utdanningssteg_id, utdanningssteg_nv from utdanningssteg";
 
-        TreeSet<Level> levels = new TreeSet<>();
+            this.levels = new TreeSet<>();
+            
+            try
+            {
+                PreparedStatement stmt = this.connection.prepareStatement(sql);
+                ResultSet result = stmt.executeQuery();
+                while (result.next())
+                {
+                    this.levels.add(new Level(
+                                result.getInt(1),
+                                result.getString(2)
+                            )
+                    );
+                }
+            }
+            catch (SQLException e)
+            {
+                System.err.println("Feil i getLevels: " + sql +  " " + e);
+            }
+        }
+
+        return this.levels;
+    }
+
+    public TreeMap<Integer, Contact>
+    getContacts(Student student)
+    {
+        int currentLevelId = student.getStudentLevelId();
+        String sql = "select kontakttype.kontakttype_id, kontakttype_nv, ansatt.ansatt_id, ansatt_nv" +
+                    " from kontakt, ansatt, kontakttype" +
+                    " where kontakt.ansatt_id = ansatt.ansatt_id and kontakt.kontakttype_id = kontakttype.kontakttype_id" +
+                    " and student_steg_id = " + currentLevelId;
+                    
+        TreeMap<Integer, Contact> contacts = new TreeMap<>();
         
         try
         {
@@ -263,17 +318,57 @@ public class MySQLProvider
             ResultSet result = stmt.executeQuery();
             while (result.next())
             {
-                levels.add(new Level(
-                            result.getInt(1),
-                            result.getString(2)
-                           )
+                int contactTypeId = result.getInt(1);
+                contacts.put(contactTypeId, new Contact(
+                    contactTypeId,
+                            result.getString(2),
+                            result.getInt(3),
+                            result.getString(4)
+                        )
                 );
             }
         }
         catch (SQLException e)
         {
-            System.err.println("Feil i getLevels: " + sql +  " " + e);
+            System.err.println("Feil i getContacts: " + sql +  " " + e);
         }
-        return levels;
+
+        return contacts;
+    }
+
+    public TreeMap<Integer, Document>
+    getDocuments(Student student)
+    {
+// todo Uryddig bsuk av hva som er id og name. Smnl med Contact etc.        
+        int currentLevelId = student.getStudentLevelId();
+        String sql = "select dokument_id, url, dokumenttype.dokumenttype_id, dokumenttype_nv" +
+                        " from dokument, dokumenttype" +
+                        " where dokument.dokumenttype_id = dokumenttype.dokumenttype_id" +
+                        " and student_steg_id = " + currentLevelId;
+                    
+        TreeMap<Integer, Document> documents = new TreeMap<>();
+        
+        try
+        {
+            PreparedStatement stmt = this.connection.prepareStatement(sql);
+            ResultSet result = stmt.executeQuery();
+            while (result.next())
+            {
+                int documentTypeId = result.getInt(3);
+                documents.put(documentTypeId, new Document(
+                            result.getInt(1),
+                            result.getString(2),
+                            documentTypeId,
+                            result.getString(4)
+                        )
+                );
+            }
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Feil i getContacts: " + sql +  " " + e);
+        }
+
+        return documents;
     }
 }

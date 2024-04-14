@@ -1,24 +1,12 @@
 package no.getacademy.studentdemo.beans;
 
 import javafx.beans.property.*;
+import no.getacademy.studentdemo.util.*;
 
 public abstract class AbstractItem
 {
     private IntegerProperty idProperty;
     private StringProperty nameProperty;
-
-    public final static String IDPROPERTY_NAME = "id";   
-    public final static String NAMEPROPERTY_NAME = "name";   
-    public final static String FROM_DATEPROPERTY_NAME = "fromDate";   
-    public final static String TO_DATEPROPERTY_NAME = "toDate";   
-    public final static String USERIDPROPERTY_NAME = "userId";   
-    public final static String USERTYPEIDPROPERTY_NAME = "userTypeId";   
-    public final static String USERNAMEPROPERTY_NAME = "userName";   
-    public final static String MAILIDPROPERTY_NAME = "mailId";   
-    public final static String LEVELIDPROPERTY_NAME = "levelId";   
-    public final static String STUDENT_LEVELIDPROPERTY_NAME = "studentLevelId";   
-    public final static String DISCORDNAMEPROPERTY_NAME = "discordName";   
-    public final static String GITHUBNAMEPROPERTY_NAME = "gitHubName";   
 
     public final static int TYPE_NOT_SET = 0;
     public final static int STUDENT = 1;
@@ -40,7 +28,7 @@ public abstract class AbstractItem
     idProperty()
     {
         if (this.idProperty == null)
-            this.idProperty = new SimpleIntegerProperty(this, AbstractItem.IDPROPERTY_NAME);
+            this.idProperty = new SimpleIntegerProperty(this, PropertyConstants.IDPROPERTY_NAME);
         return this.idProperty;
     }
 
@@ -54,7 +42,7 @@ public abstract class AbstractItem
     nameProperty()
     {
         if (this.nameProperty == null)
-            this.nameProperty = new SimpleStringProperty(this, AbstractItem.NAMEPROPERTY_NAME);
+            this.nameProperty = new SimpleStringProperty(this, PropertyConstants.NAMEPROPERTY_NAME);
         return this.nameProperty;
     }    
 

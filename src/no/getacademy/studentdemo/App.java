@@ -18,9 +18,6 @@ public class App extends Application
     private TeacherScene                teacherScene; 
     private StudentScene                studentScene; 
 
-    public static TreeSet<Teacher>      teachers;
-    public static TreeSet<Level>        levels;
-
     public static MySQLProvider         provider;
     public Properties                   defaultProperties, properties;
 
@@ -28,8 +25,8 @@ public class App extends Application
     public static String                PROP_DBUSER             = "SQL_User";
     public static String                PROP_DBPASSWORD         = "SQL_Password";
 
-    public static int                   SCREEN_WIDTH             = 640;
-    public static int                   SCREEN_HEIGHT            = 480;
+    public static int                   SCREEN_WIDTH             = 1400;
+    public static int                   SCREEN_HEIGHT            = 900;
 
     public static User                  loggedInUser;
 
@@ -43,8 +40,6 @@ public class App extends Application
                                             this.properties.getProperty(App.PROP_DBPASSWORD)
         );
 
-        this.loadSets();
-
         Group loginRoot = new Group();
         this.loginScene = new LoginScene(loginRoot);
 
@@ -55,11 +50,10 @@ public class App extends Application
         this.studentScene = new StudentScene(studentRoot);
 
         App.loggedInUser = new User();
-// todo Hva er korrekt syntaks?        
-        App.loggedInUser.userTypeIdProperty().addListener(new ChangeListener()
+        App.loggedInUser.userTypeIdProperty().addListener(new ChangeListener<Number>()
         {
             @Override 
-            public void changed(ObservableValue o, Object oldVal, Object newVal)
+            public void changed(ObservableValue<? extends Number> o, Number oldVal, Number newVal)
             {
                 int userTypeId = (Integer)newVal;
                 if (userTypeId == AbstractItem.STUDENT)
@@ -72,13 +66,22 @@ public class App extends Application
                     teacherScene.activate();
                     stage.setScene(teacherScene);
                 }
+                stage.setX(200);
+                stage.setY(100);
             }
         });
 
 //        stage.setScene(loginScene);
+
         App.loggedInUser.idProperty().set(3);
+        App.loggedInUser.userTypeIdProperty().set(2);
         stage.setScene(this.teacherScene);
         this.teacherScene.activate();
+/*        App.loggedInUser.idProperty().set(7);
+        App.loggedInUser.userTypeIdProperty().set(1);
+        stage.setScene(this.studentScene);
+        this.studentScene.activate();
+*/        
         stage.show();
     }
 
@@ -94,19 +97,12 @@ public class App extends Application
         try
         {
             this.properties.load(new FileReader(iniFile));
+
         }
         catch (Exception e)
         {
             System.err.println(iniFile + " could not be opened. " + e);
             System.exit(-2);
         }
-    }
-
-    private void
-    loadSets()
-    {
-// todo Flytte def -> final        
-        App.teachers = App.provider.getTeachers();
-
     }
 }

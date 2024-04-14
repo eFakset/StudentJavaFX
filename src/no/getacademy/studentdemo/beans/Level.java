@@ -15,4 +15,14 @@ public class Level extends AbstractItem implements Comparable<Level>
         else
             return this.getId() - compLevel.getId();
     } 
+
+    @Override
+    public boolean
+    equals(Object o)
+    {
+        if (o instanceof Level)
+            return this.getId() == ((Level)o).getId();
+        else
+            return false;
+    }
 }
