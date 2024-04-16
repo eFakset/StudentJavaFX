@@ -7,6 +7,7 @@ drop view if exists vstudent;
 
 DROP TABLE IF EXISTS dokument;
 DROP TABLE IF EXISTS kontakt;
+DROP TABLE IF EXISTS student_bedrift;
 DROP TABLE IF EXISTS student_steg;
 DROP TABLE IF EXISTS student;
 DROP TABLE IF EXISTS ansatt;
@@ -83,6 +84,7 @@ CREATE TABLE student (
   github_id varchar(45),
   opprettet_dt datetime not null,
   endret_dt datetime not null,
+  endret_av_nv VARCHAR(45) NOT NULL,
 PRIMARY KEY (student_id)
 );
 
@@ -96,6 +98,7 @@ create table student_steg (
 		student_steg_id int not null,
 		student_id SMALLINT NOT NULL,
         utdanningssteg_id SMALLINT not null,
+        team_nr smallint,
         dato_fra date not null,
         dato_til date null,
 primary key (student_steg_id)
@@ -156,13 +159,27 @@ ALTER TABLE dokument
     ON DELETE RESTRICT
     ON UPDATE RESTRICT;  
     
+create table student_bedrift (
+		student_steg_id int not null,
+		bedrift_nv varchar(45) not null,
+        dato_fra date not null,
+        dato_til date null,
+primary key (student_steg_id)    
+);    
+					    
+ALTER TABLE student_bedrift
+ ADD CONSTRAINT FK_student_bedrift_steg FOREIGN KEY FK_student_bedrift_steg (student_steg_id)
+    REFERENCES student_steg (student_steg_id)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT; 
+    
 create view vansatt as
 select bruker.bruker_id, brukertype_id, ansatt_id, ansatt_nv, mail_id, bruker_nv, ansatt.opprettet_dt, ansatt.endret_dt
 from ansatt
 left outer join bruker using (bruker_id);    
     
 create view vstudent as
-select bruker.bruker_id, brukertype_id, student.student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student.opprettet_dt, student.endret_dt
+select bruker.bruker_id, brukertype_id, student.student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, student.opprettet_dt, student.endret_dt, student.endret_av_nv
 from student
 left outer join bruker using (bruker_id)
 left outer join student_steg on student.student_id = student_steg.student_id and now() between dato_fra and ifnull(dato_til,'2099-12-31');    
@@ -176,8 +193,8 @@ insert into utdanningssteg values(99, 'Sluttet');
 
 insert into dokumenttype values(0, 'Ukjent', null);    
 insert into dokumenttype values(1, 'Kontaktpunkt', null);    
-insert into dokumenttype values(2, 'Opplæringsplan', null);    
-insert into dokumenttype values(9, 'Vitnemål', null);  
+insert into dokumenttype values(2, 'Opplæringsplan', null);     
+insert into dokumenttype values(3, 'Notater', null);     
 
 insert into kontakttype values (0, 'Ikke satt');
 insert into kontakttype values (1, 'Faglærer');
@@ -200,13 +217,19 @@ insert into ansatt values(3, 3, 'Emmanuel', 'emmanuel', now(), now());
 insert into ansatt values(4, 4, 'Isaac', 'isaac', now(), now());    
 insert into ansatt values(5, 5, 'Albert', 'albert', now(), now());    
 
-insert into student values(1, 6, 'Petter Smart', 'petter', 'discord1', 'github1', now(), now());     
-insert into student values(2, 7, 'Helene Harefrøken', 'helene', 'discord2', 'github2', now(), now());     
+insert into student values(1, 6, 'Petter Smart', 'petter', 'discord1', 'github1', now(), now(), 'system');     
+insert into student values(2, 7, 'Helene Harefrøken', 'helene', 'discord2', 'github2', now(), now(), 'system');     
 
-insert into student_steg values (1, 1, 1, '2023-09-01', '2024-04-30');
-insert into student_steg values (2, 2, 2, '2024-01-01', null); 
+insert into student_steg values (1, 1, 1, 1, '2023-09-01', '2024-04-30');
+insert into student_steg values (2, 2, 2, 2, '2024-01-01', null); 
+
+insert into student_bedrift values(1, 'Høvleriet', '2024-06-01', '2025-05-16');
 
 insert into kontakt values (1, 4, 1);
 insert into kontakt values (1, 1, 2);
 insert into kontakt values (2, 3, 2);
 insert into kontakt values (2, 2, 1);
+
+insert into dokument values(1, 2, 2, "https://vg.no");
+insert into dokument values(2, 2, 1, "https://dagbladet.no");
+insert into dokument values(3, 2, 3, "https://nrk.no");
