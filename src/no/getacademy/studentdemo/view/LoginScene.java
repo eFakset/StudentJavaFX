@@ -53,6 +53,9 @@ public class LoginScene extends Scene
         grid.add(actionTarget, 1, 6);
         root.getChildren().add(grid);
 
+        userTextField.setText("emmanuel");
+        pwBox.setText("kant");
+
         btn.setOnAction(new EventHandler<ActionEvent>()
 		{
             @Override

@@ -11,12 +11,12 @@ import no.getacademy.studentdemo.util.*;
 public class Student extends AbstractItem implements Comparable<Student>
 {
     private IntegerProperty userIdProperty, userTypeIdProperty, levelIdProperty, studentLevelIdProperty;
-    private StringProperty mailIdProperty, discordNameProperty, gitHubNameProperty, userNameProperty, studentLevelNameProperty;
-    private SimpleObjectProperty<LocalDate> fromProperty, toProperty;
+    private StringProperty mailIdProperty, discordNameProperty, gitHubNameProperty, userNameProperty, studentLevelNameProperty, updatedByNameProperty;
+    private SimpleObjectProperty<LocalDate> createdProperty, updatedProperty;
 
     public Student(int userId, int userTypeId, int id, 
                     String name, String mailId, String discordName, String gitHubName, String userName, 
-                    int levelId, int studentLevelId, Date fromDate, Date toDate)
+                    int levelId, int studentLevelId, Date createdDate, Date updatedDate, String updatedBy)
     {
         super(id, name);
 
@@ -30,56 +30,66 @@ public class Student extends AbstractItem implements Comparable<Student>
         this.levelIdProperty().set(levelId);
         this.studentLevelIdProperty().set(studentLevelId);
 
-        if (fromDate != null)
-        {
-            Calendar fromCal = Calendar.getInstance();
-            fromCal.setTime(fromDate);
+        Calendar createdCal = Calendar.getInstance();
+        createdCal.setTime(createdDate);
 
-            LocalDate from = LocalDate.of(fromCal.get(Calendar.YEAR),
-                                          fromCal.get(Calendar.MONTH) + 1,
-                                          fromCal.get(Calendar.DAY_OF_MONTH)
-                            );
-            this.fromProperty().set(from);
-        }
-        if (toDate != null)
-        {
-            Calendar toCal = Calendar.getInstance();
-            toCal.setTime(toDate);
+        LocalDate created = LocalDate.of(createdCal.get(Calendar.YEAR),
+                                        createdCal.get(Calendar.MONTH) + 1,
+                                        createdCal.get(Calendar.DAY_OF_MONTH)
+                                    );
+        this.createdProperty().set(created);
 
-            LocalDate to = LocalDate.of(toCal.get(Calendar.YEAR),
-                                        toCal.get(Calendar.MONTH) + 1,
-                                        toCal.get(Calendar.DAY_OF_MONTH)
-                            );
-            this.fromProperty().set(to);
-        }
+        Calendar updatedCal = Calendar.getInstance();
+        updatedCal.setTime(createdDate);
+
+        LocalDate updated = LocalDate.of(createdCal.get(Calendar.YEAR),
+                        updatedCal.get(Calendar.MONTH) + 1,
+                        updatedCal.get(Calendar.DAY_OF_MONTH)
+                        );
+        this.updatedProperty().set(updated);
+        this.updatedByNameProperty().set(updatedBy);
     }
 
     public SimpleObjectProperty<LocalDate>
-    fromProperty()
+    createdProperty()
     {
-        if (this.fromProperty == null)
-            this.fromProperty = new SimpleObjectProperty<>(this, PropertyConstants.FROM_DATEPROPERTY_NAME);
-        return this.fromProperty;
+        if (this.createdProperty == null)
+            this.createdProperty = new SimpleObjectProperty<>(this, PropertyConstants.CREATED_DATEPROPERTY_NAME);
+        return this.createdProperty;
     }
 
     public LocalDate
-    getFromDate()
+    getCreatedDate()
     {
-        return this.fromProperty.get();
+        return this.createdProperty.get();
     }
 
     public SimpleObjectProperty<LocalDate>
-    toProperty()
+    updatedProperty()
     {
-        if (this.toProperty == null)
-            this.toProperty = new SimpleObjectProperty<>(this, PropertyConstants.TO_DATEPROPERTY_NAME);
-        return this.toProperty;
+        if (this.updatedProperty == null)
+            this.updatedProperty = new SimpleObjectProperty<>(this, PropertyConstants.UPDATED_DATEPROPERTY_NAME);
+        return this.updatedProperty;
     }
 
     public LocalDate
-    getToDate()
+    getUpdatedDate()
     {
-        return this.toProperty.get();
+        return this.updatedProperty.get();
+    }
+
+    public String
+    getUpdatedByName()
+    {
+        return this.updatedByNameProperty.get();
+    }
+
+    public StringProperty
+    updatedByNameProperty()
+    {
+        if (this.updatedByNameProperty == null)
+            this.updatedByNameProperty = new SimpleStringProperty(this, PropertyConstants.UPDATEDBY_NAMEPROPERTY_NAME);
+        return this.updatedByNameProperty;
     }
 
     public IntegerProperty
@@ -178,10 +188,10 @@ public class Student extends AbstractItem implements Comparable<Student>
         if (this.discordNameProperty == null)
             this.discordNameProperty = new SimpleStringProperty(this, PropertyConstants.DISCORDNAMEPROPERTY_NAME);
         return this.discordNameProperty;
-    }    
+    } 
 
     public String 
-    getGitHubNameProperty()
+    getGitHubName()
     { 
         return this.gitHubNameProperty().get();
     }

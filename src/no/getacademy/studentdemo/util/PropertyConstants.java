@@ -4,6 +4,9 @@ public class PropertyConstants
 {
     public final static String IDPROPERTY_NAME = "id";   
     public final static String NAMEPROPERTY_NAME = "name";   
+    public final static String CREATED_DATEPROPERTY_NAME = "createdDate";   
+    public final static String UPDATED_DATEPROPERTY_NAME = "updatedDate";   
+    public final static String UPDATEDBY_NAMEPROPERTY_NAME = "updatedBy";   
     public final static String FROM_DATEPROPERTY_NAME = "fromDate";   
     public final static String TO_DATEPROPERTY_NAME = "toDate";   
     public final static String USERTYPEIDPROPERTY_NAME = "userTypeId";   
@@ -15,10 +18,12 @@ public class PropertyConstants
     public final static String LEVELIDPROPERTY_NAME = "levelId";   
     public final static String STUDENT_LEVELIDPROPERTY_NAME = "studentLevelId";   
     public final static String STUDENT_LEVELNAMEPROPERTY_NAME = "studentLevelName";   
+    public final static String STUDENT_TEAMNOPROPERTY_NAME = "teamNo";   
     public final static String DISCORDNAMEPROPERTY_NAME = "discordName";   
     public final static String GITHUBNAMEPROPERTY_NAME = "gitHubName";  
     public final static String DOCUMENTTYPEIDPROPERTY_NAME = "documentTypeId";  
     public final static String DOCUMENTTYPENAMEPROPERTY_NAME = "documentTypeName";  
+    public final static String COMPANYNAMEPROPERTY_NAME = "companyName";  
     
     private PropertyConstants(){}
 }

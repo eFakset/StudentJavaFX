@@ -30,7 +30,7 @@ public class Document extends AbstractItem implements Comparable<Level>
     }
 
     public String 
-    getdocumentTypeName()
+    getDocumentTypeName()
     { 
         return this.documentTypeNameProperty().get();
     }

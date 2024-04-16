@@ -71,13 +71,13 @@ public class App extends Application
             }
         });
 
-//        stage.setScene(loginScene);
+        stage.setScene(loginScene);
 
-        App.loggedInUser.idProperty().set(3);
+/*        App.loggedInUser.idProperty().set(3);
         App.loggedInUser.userTypeIdProperty().set(2);
         stage.setScene(this.teacherScene);
         this.teacherScene.activate();
-/*        App.loggedInUser.idProperty().set(7);
+        App.loggedInUser.idProperty().set(7);
         App.loggedInUser.userTypeIdProperty().set(1);
         stage.setScene(this.studentScene);
         this.studentScene.activate();

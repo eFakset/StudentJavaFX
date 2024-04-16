@@ -16,13 +16,15 @@ import no.getacademy.studentdemo.beans.*;
 
 public class StudentGrid extends GridPane
 {
-    private final Label document2Lb;
-    private final Text studentIdTx, levelTx, levelFromTx, teacherNKTx, teacherITTx;
-    private final TextField studentNameTxf, mailTxf, discordTxf, githubTxf;
+    private       Student currentStudent;
+
+    private final Label document2Lb, document3Lb;
+    private final Text studentIdTx, levelTx, teamNoTx, levelFromTx, teacherNKTx, teacherITTx, lastUpdatedTx, lastUpdatedByTx;
+    private final TextField studentNameTxf, mailTxf, discordTxf, githubTxf, companyTxf;
     private final ComboBox<Level> levelCb;
     private final ComboBox<Teacher> teacherNKCb, teacherITCb;
-    private final TextField document1Txf, document2Txf;
-    private final Button document1Bn, document2Bn;
+    private final TextField document1Txf, document2Txf, document3Txf;
+    private final Button document1Bn, document2Bn, document3Bn, okBn;
 
     private final TreeSet<Teacher> teachers;
 
@@ -33,64 +35,104 @@ public class StudentGrid extends GridPane
         this.setVgap(10);
         this.setPadding(new Insets(25, 25, 25, 25));
 
-        this.add(new Label("Id:"), 0, 1);
+        int rowNo = 1;
+        this.add(new Label("Id:"), 0, rowNo);
         this.studentIdTx = new Text();
-        this.add(studentIdTx, 1, 1);  
+        this.add(studentIdTx, 1, rowNo);  
+        rowNo++;
 
-        this.add(new Label("Navn:"), 0, 2);
+        this.add(new Label("Navn:"), 0, rowNo);
         this.studentNameTxf = new TextField();
-        this.add(studentNameTxf, 1, 2); 
+        this.add(studentNameTxf, 1, rowNo); 
+        rowNo++;
         
-        this.add(new Label("Nivå:"), 0, 3);
+        this.add(new Label("Nivå:"), 0, rowNo);
         this.levelTx = new Text();
         this.levelCb = new ComboBox<>();
-        this.add(this.levelTx, 1, 3);
-        this.add(this.levelCb, 1, 3);
-        this.add(new Label("Siden:"), 2, 3);
+        this.add(this.levelTx, 1, rowNo);
+        this.add(this.levelCb, 1, rowNo);
+        this.add(new Label("Siden:"), 2, rowNo);
         this.levelFromTx = new Text();
-        this.add(this.levelFromTx, 3, 3);
+        this.add(this.levelFromTx, 3, rowNo);
 
         this.levelCb.getItems().add(new Level(0, "...")); // "navn" = ...
         this.levelCb.getItems().addAll(App.provider.getLevels());
         this.levelCb.getSelectionModel().selectFirst();
+        rowNo++;
 
-        this.add(new Label("Discord:"), 0, 4);
+        this.add(new Label("Team:"), 0, rowNo);
+        this.teamNoTx = new Text();
+        this.add(teamNoTx, 1, rowNo);  
+        rowNo++;
+
+        this.add(new Label("Discord:"), 0, rowNo);
         this.discordTxf = new TextField();
-        this.add(discordTxf, 1, 4); 
+        this.add(discordTxf, 1, rowNo); 
+        rowNo++;
 
-        this.add(new Label("GitHub:"), 0, 5);
+        this.add(new Label("GitHub:"), 0, rowNo);
         this.githubTxf = new TextField();
-        this.add(githubTxf, 1, 5); 
+        this.add(githubTxf, 1, rowNo); 
+        rowNo++;
 
-        this.add(new Label("Mailadresse:"), 0, 6);
+        this.add(new Label("Mailadresse:"), 0, rowNo);
         this.mailTxf = new TextField();
-        this.add(mailTxf, 1, 6, 3, 1); 
+        this.add(mailTxf, 1, rowNo, 3, 1); 
+        rowNo++;
 
-        this.add(new Label("Fadder NK:"), 0, 7);
+        this.add(new Label("Fadder NK:"), 0, rowNo);
         this.teacherNKTx = new Text();
         this.teacherNKCb = new ComboBox<>();
-        this.add(teacherNKTx, 1, 7); 
-        this.add(teacherNKCb, 1, 7); 
+        this.add(teacherNKTx, 1, rowNo); 
+        this.add(teacherNKCb, 1, rowNo); 
+        rowNo++;
 
-        this.add(new Label("Fadder IT:"), 0, 8);
+        this.add(new Label("Fadder IT:"), 0, rowNo);
         this.teacherITTx = new Text();
         this.teacherITCb = new ComboBox<>();
-        this.add(teacherITTx, 1, 8); 
-        this.add(teacherITCb, 1, 8); 
+        this.add(teacherITTx, 1, rowNo); 
+        this.add(teacherITCb, 1, rowNo); 
+        rowNo++;
 
-        this.add(new Label("Opplæringsplan:"), 0, 9);
+        this.add(new Label("Opplæringsplan:"), 0, rowNo);
         this.document1Txf = new TextField();
         this.document1Txf.setMinWidth(300);
-        this.add(document1Txf, 1, 9, 3, 1); 
+        this.add(document1Txf, 1, rowNo, 3, 1); 
         this.document1Bn = new Button("Åpne");
-        this.add(document1Bn, 5, 9); 
+        this.add(document1Bn, 5, rowNo); 
+        rowNo++;
 
         this.document2Lb = new Label("Kontaktpunkt:");
-        this.add(this.document2Lb, 0, 10);
+        this.add(this.document2Lb, 0, rowNo);
         this.document2Txf = new TextField();
-        this.add(document2Txf, 1, 10, 3, 1); 
+        this.add(document2Txf, 1, rowNo, 3, 1); 
         this.document2Bn = new Button("Åpne");
-        this.add(document2Bn, 5, 10); 
+        this.add(document2Bn, 5, rowNo); 
+        rowNo++;
+
+        this.add(new Label("Bedrift:"), 0, rowNo);
+        this.companyTxf = new TextField();
+        this.add(companyTxf, 1, rowNo); 
+        rowNo++;
+
+        this.document3Lb = new Label("Egne notater:");
+        this.add(this.document3Lb, 0, rowNo);
+        this.document3Txf = new TextField();
+        this.add(document3Txf, 1, rowNo, 3, 1); 
+        this.document3Bn = new Button("Åpne");
+        this.add(document3Bn, 5, rowNo); 
+        rowNo++;
+
+        this.add(new Label("Sist endret:"), 0, rowNo);
+        this.lastUpdatedTx = new Text();
+        this.add(lastUpdatedTx, 1, rowNo); 
+        this.add(new Label("av:"), 2, rowNo);
+        this.lastUpdatedByTx = new Text();
+        this.add(lastUpdatedByTx, 3, rowNo); 
+        rowNo++;
+
+        this.okBn = new Button("Lagre");
+        this.add(this.okBn, 0, rowNo);
 
 // todo Flytte til noe a la addListeners()
 
@@ -99,7 +141,12 @@ public class StudentGrid extends GridPane
             @Override
             public void handle(ActionEvent ae)
 			{
-                String trimmedRef = document1Txf.getText().trim();
+                String ref = document1Txf.getText();
+                if (ref == null)
+                    return;
+                String trimmedRef = ref.trim();
+                if (trimmedRef.length() == 0)
+                    return;
                 try
                 {
                     Desktop.getDesktop().browse(URI.create(trimmedRef));
@@ -116,7 +163,12 @@ public class StudentGrid extends GridPane
             @Override
             public void handle(ActionEvent ae)
 			{
-                String trimmedRef = document2Txf.getText().trim();
+                String ref = document2Txf.getText();
+                if (ref == null)
+                    return;
+                String trimmedRef = ref.trim();
+                if (trimmedRef.length() == 0)
+                    return;
                 try
                 {
                     Desktop.getDesktop().browse(URI.create(trimmedRef));
@@ -124,6 +176,48 @@ public class StudentGrid extends GridPane
                 catch (Exception e)
                 {
                     System.err.println("Her gikk noe galt!");
+                }
+   			}
+        });
+
+        document3Bn.setOnAction(new EventHandler<ActionEvent>()
+		{
+            @Override
+            public void handle(ActionEvent ae)
+			{
+                String ref = document3Txf.getText();
+                if (ref == null)
+                    return;
+                String trimmedRef = ref.trim();
+                if (trimmedRef.length() == 0)
+                    return;
+                try
+                {
+                    Desktop.getDesktop().browse(URI.create(trimmedRef));
+                }
+                catch (Exception e)
+                {
+                    System.err.println("Her gikk noe galt!");
+                }
+   			}
+        });
+
+        okBn.setOnAction(new EventHandler<ActionEvent>()
+		{
+            @Override
+            public void handle(ActionEvent ae)
+			{
+                currentStudent.nameProperty().set(studentNameTxf.getText());
+                currentStudent.mailIdProperty().set(mailTxf.getText());
+                currentStudent.discordNameProperty().set(discordTxf.getText());
+                currentStudent.gitHubNameProperty().set(githubTxf.getText());
+                currentStudent.updatedByNameProperty().set(App.loggedInUser.getName());
+
+                boolean ok = App.provider.updateStudent(currentStudent);
+                if (ok)
+                {
+                    lastUpdatedTx.setText(currentStudent.getUpdatedDate().toString());
+                    lastUpdatedByTx.setText(currentStudent.getUpdatedByName().toString());
                 }
    			}
         });
@@ -145,28 +239,36 @@ public class StudentGrid extends GridPane
     public void
     activate(Student student)
     {
-        this.studentIdTx.setText(Integer.toString(student.getUserId())); 
-        this.studentNameTxf.setText(student.getName()); 
+        this.currentStudent = student;
 
-        TreeMap<Integer, Contact> contacts = App.provider.getContacts(student);
+        this.studentIdTx.setText(Integer.toString(this.currentStudent.getUserId())); 
+        this.studentNameTxf.setText(this.currentStudent.getName()); 
+
+        StudentLevel studentLevel = App.provider.getStudentLevel(this.currentStudent);
+
+        TreeMap<Integer, Contact> contacts = App.provider.getContacts(this.currentStudent);
         Contact contactNK = contacts.get(2);
         int teacherNKId = contactNK.getTeacherId();
         Contact contactIT = contacts.get(1);
         int teacherITId = contactIT.getTeacherId();
+        this.teamNoTx.setText(Integer.toString(studentLevel.getTeamNo()));
 
-        TreeMap<Integer, Document> documents = App.provider.getDocuments(student);
-        String url1 = "", url2 = "";
+        TreeMap<Integer, Document> documents = App.provider.getDocuments(this.currentStudent);
+        String url1 = "", url2 = "", url3 = "";
         Document document1 = documents.get(1);
         if (document1 != null)
             url1 = document1.getName();
         Document document2 = documents.get(2);
         if (document2 != null)
             url2 = document2.getName();
-
+        Document document3 = documents.get(3);
+        if (document3 != null)
+            url3 = document3.getName();
+    
         if (App.loggedInUser.getUserTypeId() == 1)
         {
             this.levelCb.setVisible(false);
-            this.levelTx.setText(student.getStudentLevelName()); 
+            this.levelTx.setText(this.currentStudent.getStudentLevelName()); 
             this.teacherNKCb.setVisible(false);
             this.teacherNKTx.setText(contactNK.getTeacherName()); 
             this.teacherITCb.setVisible(false);
@@ -177,11 +279,15 @@ public class StudentGrid extends GridPane
             this.document2Lb.setVisible(false);
             this.document2Txf.setVisible(false);
             this.document2Bn.setVisible(false);
+            this.document3Lb.setVisible(false);
+            this.document3Txf.setVisible(false);
+            this.document3Bn.setVisible(false);
+            this.companyTxf.setEditable(false);
         }
         else
         {
             this.levelTx.setVisible(false);
-            this.levelCb.getSelectionModel().select(new Level(student.getLevelId(), student.getStudentLevelName()));
+            this.levelCb.getSelectionModel().select(new Level(this.currentStudent.getLevelId(), this.currentStudent.getStudentLevelName()));
 // todo Forenkle dette!  Egen, forenklet const for Teacher?  Trenger jeg this.teachers? 
             this.teacherNKTx.setVisible(false);
             this.teacherNKCb.getSelectionModel().select(new Teacher(-1, 2, teacherNKId, contactNK.getTeacherName(), "N/A", "N/A"));
@@ -189,11 +295,15 @@ public class StudentGrid extends GridPane
             this.teacherITCb.getSelectionModel().select(new Teacher(-1, 2, teacherITId, contactIT.getTeacherName(), "N/A", "N/A"));
             this.document1Txf.setText(url1);
             this.document2Txf.setText(url2);
+            this.document3Txf.setText(url3);
         }
-        this.levelFromTx.setText(student.getFromDate().toString());
+        this.levelFromTx.setText(studentLevel.getFromDate().toString());
+        this.companyTxf.setText(studentLevel.getCompanyName());
+        this.lastUpdatedTx.setText(this.currentStudent.getUpdatedDate().toString());
+        this.lastUpdatedByTx.setText(this.currentStudent.getUpdatedByName().toString());
 
-        this.discordTxf.setText(student.getDiscordName()); 
-        this.githubTxf.setText(student.getGitHubNameProperty()); 
-        this.mailTxf.setText(student.getMailId()); 
+        this.discordTxf.setText(this.currentStudent.getDiscordName()); 
+        this.githubTxf.setText(this.currentStudent.getGitHubName()); 
+        this.mailTxf.setText(this.currentStudent.getMailId()); 
     }
 }

@@ -97,11 +97,16 @@ public class TeacherScene extends Scene
         this.displayStudents = FXCollections.observableArrayList(this.students);
 
         TableView<Student> tableView = new TableView<>(displayStudents);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Student, Integer> idCol = new TableColumn<>("Nr");
         idCol.setCellValueFactory(new PropertyValueFactory<>(PropertyConstants.IDPROPERTY_NAME));
+        idCol.setMinWidth(25);
+        idCol.setPrefWidth(25);
+        idCol.setMaxWidth(25);
         TableColumn<Student, String> nameCol = new TableColumn<>("Navn");
         nameCol.setCellValueFactory(new PropertyValueFactory<>(PropertyConstants.NAMEPROPERTY_NAME));
+        nameCol.setMinWidth(150);
         TableColumn<Student, String> mailIdCol = new TableColumn<>("Mail");
         mailIdCol.setCellValueFactory(new PropertyValueFactory<>(PropertyConstants.MAILIDPROPERTY_NAME));
         TableColumn<Student, String> discordNameCol = new TableColumn<>("Discord");
@@ -110,8 +115,10 @@ public class TeacherScene extends Scene
         gitHubNameCol.setCellValueFactory(new PropertyValueFactory<>(PropertyConstants.GITHUBNAMEPROPERTY_NAME));
         TableColumn<Student, String> levelNameCol = new TableColumn<>("Nivå");
         levelNameCol.setCellValueFactory(new PropertyValueFactory<>(PropertyConstants.STUDENT_LEVELNAMEPROPERTY_NAME));
+        TableColumn<Student, String> lastUpdatedCol = new TableColumn<>("Endret");
+        lastUpdatedCol.setCellValueFactory(new PropertyValueFactory<>(PropertyConstants.UPDATED_DATEPROPERTY_NAME));
 
-        tableView.getColumns().setAll(idCol, nameCol, mailIdCol, discordNameCol, gitHubNameCol, levelNameCol);  
+        tableView.getColumns().setAll(idCol, nameCol, mailIdCol, discordNameCol, gitHubNameCol, levelNameCol, lastUpdatedCol);  
         
         tableView.setRowFactory( tv -> 
         {

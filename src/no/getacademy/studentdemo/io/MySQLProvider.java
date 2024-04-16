@@ -3,7 +3,6 @@ package no.getacademy.studentdemo.io;
 import java.sql.*;
 import java.util.*;
 
-import no.getacademy.studentdemo.App;
 import no.getacademy.studentdemo.beans.*;
 
 public class MySQLProvider 
@@ -112,7 +111,7 @@ public class MySQLProvider
         if (this.teachers == null)
         {
             StringBuilder b = new StringBuilder();
-            b.append("select bruker_id, brukertype_id, ansatt_id, ansatt_nv, mail_id, bruker_nv from VAnsatt");
+            b.append("select bruker_id, brukertype_id, ansatt_id, ansatt_nv, mail_id, bruker_nv from vansatt");
 
             this.teachers = new TreeSet<>();
             
@@ -145,7 +144,7 @@ public class MySQLProvider
     public Student
     getStudentByUserId(int userId)
     {
-        String sql = "select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt";
+        String sql = "select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt, endret_av_nv";
         sql = sql + " from vstudent where bruker_id = " + userId;
 
         return this.selectStudent(sql);
@@ -154,7 +153,7 @@ public class MySQLProvider
     public Student
     getStudent(int studentId)
     {
-        String sql = "select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt";
+        String sql = "select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt, endret_av_nv";
         sql = sql + " from vstudent where student_id = " + studentId;
 
         return this.selectStudent(sql);
@@ -185,7 +184,7 @@ public class MySQLProvider
     getStudents(int teacherId, int levelId)
     {
         StringBuilder b = new StringBuilder();
-        b.append("select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt from vstudent");
+        b.append("select bruker_id, brukertype_id, student_id, student_nv, mail_id, discord_id, github_id, bruker_nv, utdanningssteg_id, student_steg_id, opprettet_dt, endret_dt, endret_av_nv from vstudent");
         if (teacherId > 0)
         {
             b.append(" where");
@@ -247,7 +246,8 @@ public class MySQLProvider
                 studentLevelId,
                 result.getInt(10),
                 result.getDate(11),
-                result.getDate(12)
+                result.getDate(12),
+                result.getString(13)
             );
 
             Iterator<Level> iter = this.getLevels().iterator();
@@ -299,6 +299,46 @@ public class MySQLProvider
         }
 
         return this.levels;
+    }
+
+    public StudentLevel
+    getStudentLevel(Student student)
+    {
+        int currentLevelId = student.getStudentLevelId();
+        String sql = "select student_steg.dato_fra, student_steg.dato_til, team_nr, bedrift_nv, student_bedrift.dato_fra, student_bedrift.dato_til" +
+                    " from student_steg" +
+                    " left outer join student_bedrift on student_steg.student_steg_id = student_bedrift.student_steg_id" +
+                    " where student_steg.student_steg_id = " + currentLevelId;
+                                        
+        try
+        {
+            PreparedStatement stmt = this.connection.prepareStatement(sql);
+            ResultSet result = stmt.executeQuery();
+            while (result.next())
+            {
+// todo Rydde i Date  - trenger jeg dem i det hele tatt?              
+                java.util.Date levelFromDate = result.getDate(1);
+                java.util.Date levelToDate = result.getDate(2);
+                java.util.Date companyFromDate = result.getDate(5);
+                java.util.Date companyToDate = result.getDate(6);
+
+                String companyName = result.getString(4);
+
+                return new StudentLevel(currentLevelId, 
+                                        student.studentLevelNameProperty().get(), 
+                                        result.getInt(3),
+                                        companyName,
+                                        companyName == null ? levelFromDate : companyFromDate,
+                                        companyName == null ? levelToDate : companyToDate
+                                        );
+            }
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Feil i getStudentLevel: " + sql +  " " + e);
+        }
+
+        return null;
     }
 
     public TreeMap<Integer, Contact>
@@ -370,5 +410,31 @@ public class MySQLProvider
         }
 
         return documents;
+    }
+
+    public boolean
+    updateStudent(Student student)
+    {
+        boolean ok = true;
+        String sql = "update student set student_nv = ?, mail_id = ?, discord_id = ?," +
+                    " github_id = ?, endret_dt = now(), endret_av_nv = ? where student_id = ?";
+
+        try
+        {
+            PreparedStatement stmt = this.connection.prepareStatement(sql);
+            stmt.setString(1, student.getName());
+            stmt.setString(2, student.getMailId());
+            stmt.setString(3, student.getDiscordName());
+            stmt.setString(4, student.getGitHubName());
+            stmt.setString(5, student.getUpdatedByName());
+            stmt.setInt(6, student.getId());
+            ok = stmt.executeUpdate() == 1;
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Feil i updateStudent: " + sql +  " " + e);
+        }
+            
+        return ok;
     }
 }
